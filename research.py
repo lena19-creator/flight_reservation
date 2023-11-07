@@ -54,4 +54,6 @@ for i, field_name in enumerate(field_names):
 search_button = tk.Button(input_frame, text="Search Flight", command=search_flights, bg="red")
 search_button.grid(row=4, column=0, columnspan=3, pady=10)
 
+
 root.mainloop()
+
