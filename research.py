@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
+import tkcalendar
 from tkcalendar import DateEntry
+
 
 
 def search_flights():
@@ -15,7 +17,7 @@ def select_item(event, combobox):
 
 root = tk.Tk()
 root.geometry("600x300")
-root.configure(bg="white")
+root.configure(bg="light blue")
 root.title("Flight Search")
 
 # Create a frame for the input fields
