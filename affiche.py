@@ -12,13 +12,13 @@ def verify_login(email, password):
         host='localhost',
         user='root',
         password='root',
-        db='AirlineDatabase',
+        db='air_reservation',
         port=8889
     )
     try:
         # Créez un curseur et exécutez la requête SQL pour trouver l'utilisateur
         with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM Client WHERE email = %s AND password = %s", (email, password))
+            cursor.execute("SELECT * FROM customers WHERE email = %s AND password = %s", (email, password))
             result = cursor.fetchone()
             return result is not None  # Si result n'est pas None, l'utilisateur existe
     except Exception as e:
@@ -39,14 +39,14 @@ def login():
         #runpy.run_path(path_name='Page_Principale.py')
         try:
             if platform.system() == 'Windows':
-                subprocess.Popen(["python", "Page_Principale.py"], shell=True)
+                subprocess.Popen(["python", "homepage.py"], shell=True)
             else:
-                subprocess.Popen(["python3", "Page_Principale.py"])
+                subprocess.Popen(["python3", "homepage.py"])
         except Exception as e:
-            messagebox.showerror("Erreur", f"Erreur lors de la redirection : {e}")
+            messagebox.showerror("Error", f"error when you want to redirect the page : {e}")
     else:
         # Affichez un message d'erreur si les identifiants sont invalides
-        error_label.config(text="Email ou mot de passe incorrect!", fg="red")
+        error_label.config(text=" incorrect email or password !", fg="red")
 
 # Créez la fenêtre principale
 root = tk.Tk()
@@ -65,13 +65,13 @@ email_entry = tk.Entry(login_frame)
 email_entry.grid(row=0, column=1, padx=10, pady=10)
 
 # Créez et placez les widgets pour le mot de passe
-password_label = tk.Label(login_frame, text="Mot de passe")
+password_label = tk.Label(login_frame, text="password")
 password_label.grid(row=1, column=0, padx=10, pady=10)
 password_entry = tk.Entry(login_frame, show="*")
 password_entry.grid(row=1, column=1, padx=10, pady=10)
 
 # Créez et placez le bouton de connexion
-login_button = tk.Button(login_frame, text="Se connecter", command=login)
+login_button = tk.Button(login_frame, text="Connection", command=login)
 login_button.grid(row=2, column=0, columnspan=2, pady=10)
 
 # Créez et placez le label pour les messages d'erreur
