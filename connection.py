@@ -7,7 +7,7 @@ def myclick():
     email = txtuserid.get()
     password = txtpassword.get()
 
-    # Connect to the MySQL database
+    # Connect to the MySQL database (replace with your database details)
     conn = pymysql.connect(
         host="localhost",
         user="root",
@@ -41,7 +41,7 @@ def create_account():
     email = txtuserid.get()
     password = txtpassword.get()
 
-    # Connect to the MySQL database
+    # Connect to the MySQL database (replace with your database details)
     conn = pymysql.connect(
         host="localhost",
         user="root",
@@ -76,19 +76,19 @@ root.configure(bg="white")
 mylabel = tk.Label(root, text="Welcome to ECEtravel", font=('Helvetica'))
 mylabel.pack()
 
-frame = tk.Frame(root)
-frame.pack(pady=20)  # Add some padding to center the frame
+frame = tk.Frame(root, bg="gray90", padx=50, pady=20)  # Increase padx for wider frame
+frame.pack()
 
-email_label = tk.Label(frame, text="Email", pady=20)
+email_label = tk.Label(frame, text="Email", pady=20, bg="gray90", fg="black")  # Set background and text colour
 email_label.grid(row=0, column=0)
 
-txtuserid = tk.Entry(frame, text="Email")
+txtuserid = tk.Entry(frame, text="Email", width=30)  # Increase width for wider Entry
 txtuserid.grid(row=0, column=1)
 
-password_label = tk.Label(frame, text="Password", pady=10)
+password_label = tk.Label(frame, text="Password", pady=10, bg="gray90", fg="black")  # Set background and text colour
 password_label.grid(row=1, column=0)
 
-txtpassword = tk.Entry(frame, show="*")  # Password entry field
+txtpassword = tk.Entry(frame, show="*", width=30)  # Increase width for wider Entry
 txtpassword.grid(row=1, column=1)
 
 logme = tk.Button(root, text="Log in", command=myclick, bg="red")
@@ -102,5 +102,3 @@ enter_guest = tk.Button(root, text="Enter as a guest", command=myclick, bg="red"
 enter_guest.pack()
 
 root.mainloop()
-
-

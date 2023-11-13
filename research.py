@@ -6,7 +6,7 @@ from tkcalendar import DateEntry
 
 
 def search_flights():
-    # Add your code to handle flight search here
+
     pass
 
 
