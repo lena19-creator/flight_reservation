@@ -143,21 +143,10 @@ logme.pack()
 create_account_button = tk.Button(root, text="Create an account", command=create_account, bg="red")
 create_account_button.pack()
 
-enter_guest = tk.Button(root, text="Enter as a guest", command=myclick, bg="red")
-enter_guest.pack()
-
 def enter_as_guest():
     def save_guest_to_database():
         guest_name = guest_name_entry.get()
         save_guest_to_database(guest_name)
-
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        db='air_reservation',
-        port=8889
-    )
 
     guest_window = tk.Toplevel(root)
     guest_window.title("Enter as a Guest")
@@ -167,5 +156,28 @@ def enter_as_guest():
     guest_name_entry.pack()
 
     tk.Button(guest_window, text="Enter as a Guest", command=save_guest_to_database).pack()
+
+def save_guest_to_database(guest_name):
+    conn = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        db='air_reservation',
+        port=8889
+    )
+
+    try:
+        with conn.cursor() as cursor:
+            sql = "INSERT INTO guest (username) VALUES (%s)"
+            cursor.execute(sql, (guest_name,))
+            conn.commit()
+            print("Guest added successfully!")
+    except pymysql.Error as e:
+        print(f"Error in database: {e}")
+    finally:
+        conn.close()
+
+enter_guest = tk.Button(root, text="Enter as a guest", command=enter_as_guest, bg="red")
+enter_guest.pack()
 
 root.mainloop()
