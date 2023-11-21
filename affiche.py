@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import pymysql
+import os
 
 def verify_login(email, password):
     conn = pymysql.connect(
@@ -137,7 +137,7 @@ root.title("Connexion")
 login_frame = ttk.Frame(root)
 login_frame.pack(pady=20)
 
-email_label = ttk.Label(login_frame, text="Email")
+email_label = ttk.Label(login_frame, text="email")
 email_label.grid(row=0, column=0, padx=10, pady=10)
 email_entry = ttk.Entry(login_frame)
 email_entry.grid(row=0, column=1, padx=10, pady=10)
@@ -156,5 +156,68 @@ error_label.pack()
 tk.Button(root, text="Create Account", command=create_account).pack(pady=10)
 tk.Button(root, text="Enter as a Guest", command=enter_as_guest).pack(pady=10)
 
+
+class MainWindow:
+    def __init__(self, root):
+        self.root = root
+        self.photo = None  # Variable pour stocker la référence à l'image
+        self.create_main_window()
+
+    def create_main_window(self):
+        self.root.geometry(f"{self.root.winfo_screenwidth()}x{self.root.winfo_screenheight()}")
+        self.root.configure(bg='white')
+        self.root.title("ECE TRAVEL")
+
+        title_label = tk.Label(self.root, text="ECE TRAVEL", font=('Arial', 18), bg='white')
+        title_label.pack(side=tk.TOP, fill=tk.X)
+
+        main_frame = ttk.Frame(self.root)
+        main_frame.pack(pady=20)
+
+        image_path = "de1.png"
+
+        if os.path.exists(image_path):
+            image = Image.open(image_path)
+            image = image.resize((300, 200))
+            self.photo = ImageTk.PhotoImage(image)
+
+            image_label = tk.Label(main_frame, image=self.photo)
+            image_label.pack()
+        else:
+            messagebox.showerror("Error", "Image file not found")
+
+        email_label = ttk.Label(main_frame, text="Email")
+        email_label.grid(row=0, column=0, padx=10, pady=10)
+        email_entry = ttk.Entry(main_frame)
+        email_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        password_label = ttk.Label(main_frame, text="Password")
+        password_label.grid(row=1, column=0, padx=10, pady=10)
+        password_entry = ttk.Entry(main_frame, show="*")
+        password_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        login_button = ttk.Button(main_frame, text="Login")
+        login_button.grid(row=2, column=0, columnspan=2, pady=10)
+
+        error_label = ttk.Label(main_frame, text="")
+        error_label.grid(row=3, column=0, columnspan=2, pady=10)
+
+        create_account_button = tk.Button(main_frame, text="Create Account")
+        create_account_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+        enter_guest_button = tk.Button(main_frame, text="Enter as a Guest")
+        enter_guest_button.grid(row=5, column=0, columnspan=2, pady=10)
+
+
+root = tk.Tk()
+app = MainWindow(root)
 root.mainloop()
+
+
+
+
+
+
+
+
 

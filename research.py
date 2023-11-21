@@ -30,13 +30,14 @@ for i, field_name in enumerate(field_names):
         label.grid(row=0, column=i, sticky="w")
         if field_name in ["Departure airport", "Arrival airport"]:
             conn = pymysql.connect(
-                host="localhost",
-                user="root",
-                password="",
-                database="your_database_name"
+                host='localhost',
+                user='root',
+                password='root',
+                db='air_reservation',
+                port=8889
             )
             cursor = conn.cursor()
-            airport_query = "SELECT airport_name FROM airports"
+            airport_query = "SELECT departure_city FROM flight"
             cursor.execute(airport_query)
             airports = [row[0] for row in cursor.fetchall()]
             widget = ttk.Combobox(input_frame, values=airports)

@@ -9,10 +9,11 @@ def myclick():
 
     # Connect to the MySQL database (replace with your database details)
     conn = pymysql.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="your_database_name"
+        host='localhost',
+        user='root',
+        password='root',
+        db='air_reservation',
+        port=8889
     )
 
     # Create a cursor object
@@ -45,15 +46,15 @@ def create_account():
     conn = pymysql.connect(
         host="localhost",
         user="root",
-        password="",
-        database="your_database_name"
+        password="root",
+        database="air_reservation"
     )
 
     # Create a cursor object
     cursor = conn.cursor()
 
     # Insert the new user into the 'users' table
-    insert_query = "INSERT INTO users (email, password) VALUES (%s, %s)"
+    insert_query = "INSERT INTO customers (email, password) VALUES (%s, %s)"
     values = (email, password)
 
     try:
