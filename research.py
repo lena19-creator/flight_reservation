@@ -30,17 +30,16 @@ for i, field_name in enumerate(field_names):
         label.grid(row=0, column=i, sticky="w")
         if field_name in ["Departure airport", "Arrival airport"]:
             conn = pymysql.connect(
-                host='localhost',
-                user='root',
-                password='root',
-                db='air_reservation',
-                port=8889
+                host="localhost",
+                user="root",
+                password="",
+                database="air_reservation"
             )
             cursor = conn.cursor()
-            airport_query = "SELECT departure_city FROM flight"
-            cursor.execute(airport_query)
-            airports = [row[0] for row in cursor.fetchall()]
-            widget = ttk.Combobox(input_frame, values=airports)
+            flight_query = "SELECT DISTINCT departure_city FROM flight"  # Update the query accordingly
+            cursor.execute(flight_query)
+            cities = [row[0] for row in cursor.fetchall()]
+            widget = ttk.Combobox(input_frame, values=cities)
             widget.set(f"Select {field_name}")
         elif field_name == "Departing - Returning":
             widget = DateEntry(input_frame, width=12)
@@ -78,7 +77,5 @@ search_button = tk.Button(input_frame, text="Search Flight", command=search_flig
 search_button.grid(row=3, column=2, columnspan=3, pady=10)
 
 root.mainloop()
-
-
 
 
