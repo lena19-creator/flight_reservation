@@ -37,37 +37,81 @@ def myclick():
     conn.close()
 
 # Function to handle creating an account and adding the user to the database
-def create_account():
-    # Get user input from the entry fields
-    email = txtuserid.get()
-    password = txtpassword.get()
-
-    # Connect to the MySQL database (replace with your database details)
+def save_to_database(username, password, name, email, phone):
     conn = pymysql.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="air_reservation"
+        host='localhost',
+        user='root',
+        password='root',
+        db='air_reservation',
+        port=8889
     )
 
-    # Create a cursor object
-    cursor = conn.cursor()
+    try:
+        with conn.cursor() as cursor:
+            sql = "INSERT INTO customers (customer_type, username, password, name, email, phone) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, ('regular', username, password, name, email, phone))
+            conn.commit()
 
-    # Insert the new user into the 'users' table
-    insert_query = "INSERT INTO customers (email, password) VALUES (%s, %s)"
-    values = (email, password)
+            messagebox.showinfo("Success", "Account created successfully!")
+    except pymysql.Error as e:
+        messagebox.showerror("Error", f"Error in database: {e}")
+    finally:
+        conn.close()
+def save_guest_to_database(guest_name):
+    conn = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        db='air_reservation',
+        port=8889
+    )
 
     try:
-        cursor.execute(insert_query, values)
-        conn.commit()
-        print("User added successfully to the database")
-    except Exception as e:
-        conn.rollback()
-        print(f"Error: {e}")
+        with conn.cursor() as cursor:
+            sql = "INSERT INTO guest (username) VALUES (%s)"
+            cursor.execute(sql, (guest_name,))
+            conn.commit()
+            print("Guest added successfully!")
+    except pymysql.Error as e:
+        print(f"Error in database: {e}")
+    finally:
+        conn.close()
 
-    # Close the cursor and database connection
-    cursor.close()
-    conn.close()
+
+
+def create_account():
+    def save_to_database_from_input():
+        username = username_entry.get()
+        password = password_entry.get()
+        name = name_entry.get()
+        email = email_entry.get()
+        phone = phone_entry.get()
+        save_to_database(username, password, name, email, phone)
+
+    create_account_window = tk.Toplevel(root)
+    create_account_window.title("Create an Account")
+
+    tk.Label(create_account_window, text="Username:").pack()
+    username_entry = tk.Entry(create_account_window)
+    username_entry.pack()
+
+    tk.Label(create_account_window, text="Password:").pack()
+    password_entry = tk.Entry(create_account_window, show="*")
+    password_entry.pack()
+
+    tk.Label(create_account_window, text="Name:").pack()
+    name_entry = tk.Entry(create_account_window)
+    name_entry.pack()
+
+    tk.Label(create_account_window, text="Email:").pack()
+    email_entry = tk.Entry(create_account_window)
+    email_entry.pack()
+
+    tk.Label(create_account_window, text="Phone:").pack()
+    phone_entry = tk.Entry(create_account_window)
+    phone_entry.pack()
+
+    tk.Button(create_account_window, text="Create Account", command=save_to_database_from_input).pack()
 
 # GUI setup
 root = tk.Tk()
@@ -101,5 +145,27 @@ create_account_button.pack()
 
 enter_guest = tk.Button(root, text="Enter as a guest", command=myclick, bg="red")
 enter_guest.pack()
+
+def enter_as_guest():
+    def save_guest_to_database():
+        guest_name = guest_name_entry.get()
+        save_guest_to_database(guest_name)
+
+    conn = pymysql.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        db='air_reservation',
+        port=8889
+    )
+
+    guest_window = tk.Toplevel(root)
+    guest_window.title("Enter as a Guest")
+
+    tk.Label(guest_window, text="Guest Name:").pack()
+    guest_name_entry = tk.Entry(guest_window)
+    guest_name_entry.pack()
+
+    tk.Button(guest_window, text="Enter as a Guest", command=save_guest_to_database).pack()
 
 root.mainloop()
