@@ -68,7 +68,7 @@ for i, field_name in enumerate(field_names):
         widgets.append(widget)
 
 passengers_var = tk.StringVar()
-passengers_dropdown = ttk.Combobox(input_frame, textvariable=passengers_var, values=["Adult", "Children"])
+passengers_dropdown = ttk.Combobox(input_frame, textvariable=passengers_var, values=["Adult", "Children", "Senior"])
 passengers_dropdown.grid(row=3, column=0, sticky="w")
 passengers_dropdown.set("Type of passenger")
 widgets.insert(3, passengers_dropdown)
