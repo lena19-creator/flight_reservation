@@ -100,22 +100,30 @@ class FlightReservationApp:
         create_account_window = tk.Toplevel(self.root)
         create_account_window.title("Create an Account")
 
+        # Ajouter des labels pour chaque champ
+        tk.Label(create_account_window, text="Customer Type:").pack()
         username_entry = tk.Entry(create_account_window)
         username_entry.pack()
 
+        tk.Label(create_account_window, text="Username:").pack()
         password_entry = tk.Entry(create_account_window, show="*")
         password_entry.pack()
 
+        tk.Label(create_account_window, text="Password:").pack()
         name_entry = tk.Entry(create_account_window)
         name_entry.pack()
 
+        tk.Label(create_account_window, text="Name:").pack()
         email_entry = tk.Entry(create_account_window)
         email_entry.pack()
 
+        tk.Label(create_account_window, text="Email:").pack()
         phone_entry = tk.Entry(create_account_window)
         phone_entry.pack()
 
-        tk.Button(create_account_window, text="Create Account", command=save_to_database_from_input).pack()
+        tk.Label(create_account_window, text="Phone:").pack()
+        tk.Button(create_account_window, text="Create Account", command=lambda: self.save_to_database_from_input(
+            username_entry.get(), password_entry.get(), name_entry.get(), email_entry.get(), phone_entry.get())).pack()
 
 
     def save_to_database(self, username, password, name, email, phone):
@@ -146,10 +154,12 @@ class FlightReservationApp:
         guest_window = tk.Toplevel(self.root)
         guest_window.title("Enter as a Guest")
 
+        tk.Label(guest_window, text="Username:").pack()
         guest_name_entry = tk.Entry(guest_window)
         guest_name_entry.pack()
 
-        tk.Button(guest_window, text="Enter as a Guest", command=save_guest_to_database).pack()
+        tk.Button(guest_window, text="Enter as a Guest", command=lambda: self.save_guest_to_database(
+            guest_name_entry.get())).pack()
 
     def save_guest_to_db(self, guest_name):
         conn = pymysql.connect(
