@@ -17,7 +17,7 @@ class FlightReservationApp:
         self.header = tk.Frame(self.root, bg="#FFC0CB")
         self.header.pack(side="top", fill="x")
 
-        button_font = font.Font(size=14)
+        button_font = font.Font(size=30)
         self.welcome_button = tk.Button(self.header, text="Bienvenue", command=self.show_bienvenue, font=button_font)
         self.welcome_button.pack(side="left")
 
@@ -89,12 +89,13 @@ class FlightReservationApp:
 
     def create_account(self):
         def save_to_database_from_input():
+            customer_type=customer_type_entry.get()
             username = username_entry.get()
             password = password_entry.get()
             name = name_entry.get()
             email = email_entry.get()
             phone = phone_entry.get()
-            self.save_to_database(username, password, name, email, phone)
+            self.save_to_database(customer_type, password, name, email, phone)
             create_account_window.destroy()
 
         create_account_window = tk.Toplevel(self.root)
@@ -102,26 +103,30 @@ class FlightReservationApp:
 
         # Ajouter des labels pour chaque champ
         tk.Label(create_account_window, text="Customer Type:").pack()
+        customer_type_entry = tk.Entry(create_account_window)
+        customer_type_entry.pack()
+
+        tk.Label(create_account_window, text="Username:").pack()
         username_entry = tk.Entry(create_account_window)
         username_entry.pack()
 
-        tk.Label(create_account_window, text="Username:").pack()
+        tk.Label(create_account_window, text="Password:").pack()
         password_entry = tk.Entry(create_account_window, show="*")
         password_entry.pack()
 
-        tk.Label(create_account_window, text="Password:").pack()
+        tk.Label(create_account_window, text="Name:").pack()
         name_entry = tk.Entry(create_account_window)
         name_entry.pack()
 
-        tk.Label(create_account_window, text="Name:").pack()
+        tk.Label(create_account_window, text="Email:").pack()
         email_entry = tk.Entry(create_account_window)
         email_entry.pack()
 
-        tk.Label(create_account_window, text="Email:").pack()
+        tk.Label(create_account_window, text="Phone:").pack()
         phone_entry = tk.Entry(create_account_window)
         phone_entry.pack()
 
-        tk.Label(create_account_window, text="Phone:").pack()
+        tk.Label(create_account_window, text=":").pack()
         tk.Button(create_account_window, text="Create Account", command=lambda: self.save_to_database_from_input(
             username_entry.get(), password_entry.get(), name_entry.get(), email_entry.get(), phone_entry.get())).pack()
 
