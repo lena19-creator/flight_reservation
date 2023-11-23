@@ -32,8 +32,9 @@ for i, field_name in enumerate(field_names):
             conn = pymysql.connect(
                 host="localhost",
                 user="root",
-                password="",
-                database="air_reservation"
+                password="root",
+                database="air_reservation",
+                port=8889
             )
             cursor = conn.cursor()
             flight_query = "SELECT DISTINCT departure_city FROM flight"  # Update the query accordingly

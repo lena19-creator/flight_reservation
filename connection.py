@@ -1,183 +1,180 @@
 import tkinter as tk
+from tkinter import font
 import pymysql
+from PIL import Image, ImageTk
 
-# Function to perform login verification
-def myclick():
-    # Get user input from the entry fields
-    email = txtuserid.get()
-    password = txtpassword.get()
+class FlightReservationApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Flight Reservation System")
 
-    # Connect to the MySQL database (replace with your database details)
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        db='air_reservation',
-        port=8889
-    )
+        # Charger l'image de fond
+        self.bg_image = tk.PhotoImage(file="avion.png")
+        self.bg_label = tk.Label(self.root, image=self.bg_image)
+        self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-    # Create a cursor object
-    cursor = conn.cursor()
+        # En-tête avec un bouton "Bienvenue"
+        self.header = tk.Frame(self.root, bg="#FFC0CB")
+        self.header.pack(side="top", fill="x")
 
-    # Check if the entered email and password exist in the 'users' table
-    select_query = "SELECT * FROM users WHERE email = %s AND password = %s"
-    values = (email, password)
+        button_font = font.Font(size=14)
+        self.welcome_button = tk.Button(self.header, text="Bienvenue", command=self.show_bienvenue, font=button_font)
+        self.welcome_button.pack(side="left")
 
-    cursor.execute(select_query, values)
-    user_data = cursor.fetchone()
+        # Créer un cadre pour le formulaire
+        self.form_frame = tk.Frame(self.root, bg="#f0f0f0", bd=2)
 
-    if user_data:
-        print("Login successful!")
-        # You can add code here to navigate to another window or perform other actions upon successful login
-    else:
-        print("Invalid login credentials")
+        self.email_label = tk.Label(self.form_frame, text="Email", bg="#f0f0f0", fg="#333", font=("Arial", 12))
+        self.email_label.grid(row=0, column=0, padx=10, pady=5)
 
-    # Close the cursor and database connection
-    cursor.close()
-    conn.close()
+        self.txtuserid = tk.Entry(self.form_frame, width=30, font=("Arial", 12))
+        self.txtuserid.grid(row=0, column=1, padx=10, pady=5)
 
-# Function to handle creating an account and adding the user to the database
-def save_to_database(username, password, name, email, phone):
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        db='air_reservation',
-        port=8889
-    )
+        self.password_label = tk.Label(self.form_frame, text="Password", bg="#f0f0f0", fg="#333", font=("Arial", 12))
+        self.password_label.grid(row=1, column=0, padx=10, pady=5)
 
-    try:
-        with conn.cursor() as cursor:
-            sql = "INSERT INTO customers (customer_type, username, password, name, email, phone) VALUES (%s, %s, %s, %s, %s, %s)"
-            cursor.execute(sql, ('regular', username, password, name, email, phone))
-            conn.commit()
+        self.txtpassword = tk.Entry(self.form_frame, show="*", width=30, font=("Arial", 12))
+        self.txtpassword.grid(row=1, column=1, padx=10, pady=5)
 
-            messagebox.showinfo("Success", "Account created successfully!")
-    except pymysql.Error as e:
-        messagebox.showerror("Error", f"Error in database: {e}")
-    finally:
-        conn.close()
-def save_guest_to_database(guest_name):
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        db='air_reservation',
-        port=8889
-    )
+        self.logme = tk.Button(self.form_frame, text="Log in", font=("Arial", 12), command=self.myclick)
+        self.logme.grid(row=2, columnspan=2, pady=10)
 
-    try:
-        with conn.cursor() as cursor:
-            sql = "INSERT INTO guest (username) VALUES (%s)"
-            cursor.execute(sql, (guest_name,))
-            conn.commit()
-            print("Guest added successfully!")
-    except pymysql.Error as e:
-        print(f"Error in database: {e}")
-    finally:
-        conn.close()
+        self.create_account_button = tk.Button(self.form_frame, text="Create an account", font=("Arial", 12), command=self.create_account)
+        self.create_account_button.grid(row=3, columnspan=2, pady=5)
 
+        self.enter_guest = tk.Button(self.form_frame, text="Enter as a guest", font=("Arial", 12), command=self.enter_as_guest)
+        self.enter_guest.grid(row=4, columnspan=2, pady=5)
 
+        self.form_frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.form_frame.pack_forget()
 
-def create_account():
-    def save_to_database_from_input():
-        username = username_entry.get()
-        password = password_entry.get()
-        name = name_entry.get()
-        email = email_entry.get()
-        phone = phone_entry.get()
-        save_to_database(username, password, name, email, phone)
+        self.is_form_visible = False
 
-    create_account_window = tk.Toplevel(root)
-    create_account_window.title("Create an Account")
+    def show_bienvenue(self):
+        if not self.is_form_visible:
+            self.form_frame.pack()
+            self.is_form_visible = True
+        else:
+            self.form_frame.pack_forget()
+            self.is_form_visible = False
 
-    tk.Label(create_account_window, text="Username:").pack()
-    username_entry = tk.Entry(create_account_window)
-    username_entry.pack()
+    def myclick(self):
+        email = self.txtuserid.get()
+        password = self.txtpassword.get()
 
-    tk.Label(create_account_window, text="Password:").pack()
-    password_entry = tk.Entry(create_account_window, show="*")
-    password_entry.pack()
+        # Connexion à la base de données MySQL
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='air_reservation',
+            port=8889
+        )
+        cursor = conn.cursor()
 
-    tk.Label(create_account_window, text="Name:").pack()
-    name_entry = tk.Entry(create_account_window)
-    name_entry.pack()
+        select_query = "SELECT * FROM users WHERE email = %s AND password = %s"
+        values = (email, password)
 
-    tk.Label(create_account_window, text="Email:").pack()
-    email_entry = tk.Entry(create_account_window)
-    email_entry.pack()
+        cursor.execute(select_query, values)
+        user_data = cursor.fetchone()
 
-    tk.Label(create_account_window, text="Phone:").pack()
-    phone_entry = tk.Entry(create_account_window)
-    phone_entry.pack()
+        if user_data:
+            print("Login successful!")
+            # Actions à effectuer après une connexion réussie
+        else:
+            print("Invalid login credentials")
 
-    tk.Button(create_account_window, text="Create Account", command=save_to_database_from_input).pack()
-
-# GUI setup
-root = tk.Tk()
-root.geometry("1200x600")
-root.configure(bg="white")
-
-mylabel = tk.Label(root, text="Welcome to ECEtravel", font=('Helvetica'))
-mylabel.pack()
-
-frame = tk.Frame(root, bg="gray90", padx=50, pady=20)  # Increase padx for wider frame
-frame.pack()
-
-email_label = tk.Label(frame, text="Email", pady=20, bg="gray90", fg="black")  # Set background and text colour
-email_label.grid(row=0, column=0)
-
-txtuserid = tk.Entry(frame, text="Email", width=30)  # Increase width for wider Entry
-txtuserid.grid(row=0, column=1)
-
-password_label = tk.Label(frame, text="Password", pady=10, bg="gray90", fg="black")  # Set background and text colour
-password_label.grid(row=1, column=0)
-
-txtpassword = tk.Entry(frame, show="*", width=30)  # Increase width for wider Entry
-txtpassword.grid(row=1, column=1)
-
-logme = tk.Button(root, text="Log in", command=myclick, bg="red")
-logme.pack()
-
-# Link the "Create an account" button to the new function
-create_account_button = tk.Button(root, text="Create an account", command=create_account, bg="red")
-create_account_button.pack()
-
-def enter_as_guest():
-    def save_guest_to_database():
-        guest_name = guest_name_entry.get()
-        save_guest_to_database(guest_name)
-
-    guest_window = tk.Toplevel(root)
-    guest_window.title("Enter as a Guest")
-
-    tk.Label(guest_window, text="Guest Name:").pack()
-    guest_name_entry = tk.Entry(guest_window)
-    guest_name_entry.pack()
-
-    tk.Button(guest_window, text="Enter as a Guest", command=save_guest_to_database).pack()
-
-def save_guest_to_database(guest_name):
-    conn = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        db='air_reservation',
-        port=8889
-    )
-
-    try:
-        with conn.cursor() as cursor:
-            sql = "INSERT INTO guest (username) VALUES (%s)"
-            cursor.execute(sql, (guest_name,))
-            conn.commit()
-            print("Guest added successfully!")
-    except pymysql.Error as e:
-        print(f"Error in database: {e}")
-    finally:
+        cursor.close()
         conn.close()
 
-enter_guest = tk.Button(root, text="Enter as a guest", command=enter_as_guest, bg="red")
-enter_guest.pack()
+    def create_account(self):
+        def save_to_database_from_input():
+            username = username_entry.get()
+            password = password_entry.get()
+            name = name_entry.get()
+            email = email_entry.get()
+            phone = phone_entry.get()
+            self.save_to_database(username, password, name, email, phone)
+            create_account_window.destroy()
 
-root.mainloop()
+        create_account_window = tk.Toplevel(self.root)
+        create_account_window.title("Create an Account")
+
+        username_entry = tk.Entry(create_account_window)
+        username_entry.pack()
+
+        password_entry = tk.Entry(create_account_window, show="*")
+        password_entry.pack()
+
+        name_entry = tk.Entry(create_account_window)
+        name_entry.pack()
+
+        email_entry = tk.Entry(create_account_window)
+        email_entry.pack()
+
+        phone_entry = tk.Entry(create_account_window)
+        phone_entry.pack()
+
+        tk.Button(create_account_window, text="Create Account", command=save_to_database_from_input).pack()
+
+
+    def save_to_database(self, username, password, name, email, phone):
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='air_reservation',
+            port=8889
+        )
+        try:
+            with conn.cursor() as cursor:
+                sql = "INSERT INTO customers (customer_type, username, password, name, email, phone) VALUES (%s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql, ('regular', username, password, name, email, phone))
+                conn.commit()
+                print(f"Creating account for {username}, Name: {name}, Email: {email}, Phone: {phone}")  # Affiche un message de réussite dans la console
+        except pymysql.Error as e:
+            print(f"Error in database: {e}")  # Affiche l'erreur dans la console en cas d'échec
+        finally:
+            conn.close()
+
+    def enter_as_guest(self):
+        def save_guest_to_database():
+            guest_name = guest_name_entry.get()
+            self.save_guest_to_db(guest_name)
+            guest_window.destroy()
+
+        guest_window = tk.Toplevel(self.root)
+        guest_window.title("Enter as a Guest")
+
+        guest_name_entry = tk.Entry(guest_window)
+        guest_name_entry.pack()
+
+        tk.Button(guest_window, text="Enter as a Guest", command=save_guest_to_database).pack()
+
+    def save_guest_to_db(self, guest_name):
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='air_reservation',
+            port=8889
+        )
+        try:
+            with conn.cursor() as cursor:
+                # Insertion des données dans la table guest
+                sql = "INSERT INTO guest (username) VALUES (%s)"
+                cursor.execute(sql, (guest_name,))
+                conn.commit()
+                print(f"Entering as guest: {guest_name}")  # Message de réussite
+        except pymysql.Error as e:
+            print(f"Error in database: {e}")  # Affiche l'erreur en cas d'échec
+        finally:
+            conn.close()
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = FlightReservationApp(root)
+    root.mainloop()
+
+
