@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Label, Frame
+from tkinter import Label, Frame , Button
 from PIL import Image, ImageTk
 import pymysql
 
@@ -50,8 +50,28 @@ class CustomerPage:
                                         font=("Arial", 12))
             customer_type_label.pack()
         else:
-            error_label = Label(self.details_frame, text="Error fetching user details!", font=("Arial", 12))
+            error_label = Label(self.details_frame, text="Error!", font=("Arial", 12))
             error_label.pack()
+
+        self.add_buttons()
+
+    def add_buttons(self):
+        button_frame = Frame(self.root, bg="black", bd=3)
+        button_frame.place(relx=0.5, rely=0.6, anchor="center")
+
+        info_button = Button(button_frame, text="Information of the Customer", command=self.show_customer_info,
+                             font=("Arial", 12), bg="#4CAF50", fg="black", activeforeground="white", padx=10, pady=5)
+        info_button.pack(pady=10)
+
+        search_flight_button = Button(button_frame, text="Research a Flight", command=self.search_flight,
+                                      font=("Arial", 12), bg="#2196F3", fg="black",activeforeground="white", padx=10, pady=5)
+        search_flight_button.pack(pady=10)
+
+        flight_history_button = Button(button_frame, text="My Flight History", command=self.show_flight_history,
+                                       font=("Arial", 12), bg="#f44336", fg="black",activeforeground="white", padx=10, pady=5)
+        flight_history_button.pack(pady=10)
+
+
 
     def get_user_details(self):
         # Connectez-vous à la base de données et récupérez les détails de l'utilisateur
@@ -75,6 +95,21 @@ class CustomerPage:
         conn.close()
 
         return user_data
+
+    def show_customer_info(self):
+        # Logique pour afficher les informations du client
+        print("Display Customer Information")
+        # ...
+
+    def search_flight(self):
+        # Logique pour la recherche de vol
+        print("Search Flight")
+        # ...
+
+    def show_flight_history(self):
+        # Logique pour afficher l'historique des vols
+        print("Display Flight History")
+        # ...
 
 
 if __name__ == "__main__":
