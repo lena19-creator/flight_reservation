@@ -9,6 +9,7 @@ class CustomerPage:
         self.root = root
         self.root.title("Welcome to your Customer Page")
 
+
         # Charger l'image de fond
         self.bg_image = Image.open("image2.png")
         self.bg_image = self.bg_image.resize((1200, 800))  # Redimensionner l'image
