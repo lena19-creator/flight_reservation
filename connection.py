@@ -5,6 +5,7 @@ import pymysql
 from PIL import Image, ImageTk
 from customers import CustomerPage
 
+
 class FlightReservationApp:
     def __init__(self, root):
         self.root = root
@@ -49,10 +50,12 @@ class FlightReservationApp:
         self.logme = tk.Button(self.form_frame, text="Log in", font=("Arial", 12), command=self.myclick)
         self.logme.grid(row=2, columnspan=2, pady=10)
 
-        self.create_account_button = tk.Button(self.form_frame, text="Create an account", font=("Arial", 12), command=self.create_account)
+        self.create_account_button = tk.Button(self.form_frame, text="Create an account", font=("Arial", 12),
+                                               command=self.create_account)
         self.create_account_button.grid(row=3, columnspan=2, pady=5)
 
-        self.enter_guest = tk.Button(self.form_frame, text="Enter as a guest", font=("Arial", 12), command=self.enter_as_guest)
+        self.enter_guest = tk.Button(self.form_frame, text="Enter as a guest", font=("Arial", 12),
+                                     command=self.enter_as_guest)
         self.enter_guest.grid(row=4, columnspan=2, pady=5)
 
         self.form_frame.place(relx=0.5, rely=0.5, anchor="center")
@@ -101,7 +104,6 @@ class FlightReservationApp:
         cursor.close()
         conn.close()
 
-
     def create_account(self):
         def save_to_database_from_input():
             customer_type = customer_type_var.get()
@@ -146,12 +148,9 @@ class FlightReservationApp:
         phone_entry = tk.Entry(create_account_window)
         phone_entry.pack()
 
-
-
         tk.Label(create_account_window, text=":").pack()
         tk.Button(create_account_window, text="Create Account", command=lambda: self.save_to_database_from_input(
             username_entry.get(), password_entry.get(), name_entry.get(), email_entry.get(), phone_entry.get())).pack()
-
 
     def save_to_database_from_input(self, username, password, name, email, phone):
         conn = pymysql.connect(
@@ -166,12 +165,12 @@ class FlightReservationApp:
                 sql = "INSERT INTO customers (customer_type, username, password, name, email, phone) VALUES (%s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql, ('regular', username, password, name, email, phone))
                 conn.commit()
-                print(f"Creating account for {username}, Name: {name}, Email: {email}, Phone: {phone}")  # Affiche un message de réussite dans la console
+                print(
+                    f"Creating account for {username}, Name: {name}, Email: {email}, Phone: {phone}")  # Affiche un message de réussite dans la console
         except pymysql.Error as e:
             print(f"Error in database: {e}")  # Affiche l'erreur dans la console en cas d'échec
         finally:
             conn.close()
-
 
     def enter_as_guest(self):
         def save_guest_to_database(username):
@@ -213,5 +212,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = FlightReservationApp(root)
     root.mainloop()
-
-
