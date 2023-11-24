@@ -14,16 +14,16 @@ class FlightReservationApp:
         self.bg_label = tk.Label(self.root, image=self.bg_image)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.logo_image = Image.open("logo.png")
+        self.logo_image = Image.open("logo3.png")
         self.logo_image = self.logo_image.resize((100, 100))  # Redimensionner sans antialiasing
         self.logo_photo = ImageTk.PhotoImage(self.logo_image)
 
         # Créer un label pour afficher le logo au-dessus de la barre rose
-        self.logo_label = Label(self.root, image=self.logo_photo, bg="#FFC0CB")
+        self.logo_label = Label(self.root, image=self.logo_photo, bg="#000000")
         self.logo_label.place(x=1320, y=60)
 
         # En-tête avec un bouton "Bienvenue"
-        self.header = tk.Frame(self.root, bg="#FFC0CB")
+        self.header = tk.Frame(self.root, bg="#FFE4E1")
         self.header.pack(side="top", fill="x")
 
         button_font = font.Font(size=30)
