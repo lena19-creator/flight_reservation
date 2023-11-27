@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkcalendar import DateEntry
 import pymysql
+import subprocess
 
 
 def search_flights():
@@ -16,15 +17,19 @@ def search_flights():
     conn = pymysql.connect(
         host="localhost",
         user="root",
-        password="",
-        database="air_reservation"
+        password="root",
+        database="air_reservation",
+        port=8889
     )
     cursor = conn.cursor()
 
     # Construct the search query based on the selected criteria
-    flight_query = "SELECT * FROM flight WHERE departure_city = %s AND arrival_city = %s AND departure_time = %s AND arrival_time = %s AND classe = %s"
-    cursor.execute(flight_query, (departure_city, arrival_city, departure_time, arrival_time,classe))
+    flight_query = ("SELECT * FROM flight WHERE departure_city = %s AND arrival_city = %s AND departure_time = %s AND "
+                    "arrival_time = %s AND classe = %s")
+    cursor.execute(flight_query, (departure_city, arrival_city, departure_time, arrival_time, classe))
     matching_flights = cursor.fetchall()
+
+    print("Matching flights:", matching_flights)  # Print matching flights obtained from the database
 
     # Close the database connection
     conn.close()
@@ -40,7 +45,7 @@ class FlightApp:
         self.root.title("Flight Information")
 
         # Connect to MySQL
-        self.db = pymysql.connect(host='localhost', user='root', password='', database='air_reservation')
+        self.db = pymysql.connect(host='localhost', user='root', password='root', database='air_reservation', port=8889)
         self.cursor = self.db.cursor()
 
         # Create a frame to hold flight information, Buy buttons, and a vertical scrollbar
@@ -67,8 +72,8 @@ class FlightApp:
         self.populate_frame(matching_flights)
 
     def buy_flight(self, flight_id):
-        # Add your code to handle buying the flight
-        print(f"Bought flight with ID {flight_id}")
+        # Ouvre le fichier de paiement en tant que processus distinct
+        subprocess.Popen(["python", "payment.py"])
 
     def populate_frame(self, matching_flights):
         # Insert flight information into the inner frame
@@ -79,10 +84,12 @@ class FlightApp:
             # Display flight information
             attributes = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Ticket Price", "Class"]
             for i, attribute in enumerate(attributes):
-                attribute_label = ttk.Label(flight_frame, text=f"{attribute}:", font=('Arial', 10, 'bold'), justify=tk.CENTER)
+                attribute_label = ttk.Label(flight_frame, text=f"{attribute}:", font=('Arial', 10, 'bold'),
+                                            justify=tk.CENTER)
                 attribute_label.grid(row=0, column=i * 2, padx=5, pady=5)
 
-                flight_info_label = ttk.Label(flight_frame, text=f"{flight[attributes.index(attribute) + 1]}", justify=tk.CENTER)
+                flight_info_label = ttk.Label(flight_frame, text=f"{flight[attributes.index(attribute) + 1]}",
+                                              justify=tk.CENTER)
                 flight_info_label.grid(row=0, column=i * 2 + 1, padx=5, pady=5)
 
             # Create a "Buy" button for each flight and bind the buy_flight method
@@ -132,7 +139,7 @@ for i, field_name in enumerate(field_names):
             elif field_name == "Arrival Time":
                 arrival_time_cal = widget
     else:
-        label.grid(row=2, column=i-4, sticky="w")
+        label.grid(row=2, column=i - 4, sticky="w")
         if field_name == "Class":
             class_var = tk.StringVar()
             class_dropdown = ttk.Combobox(input_frame, textvariable=class_var, values=["First", "Economy", "Business"])
@@ -154,6 +161,3 @@ search_button = tk.Button(input_frame, text="Search Flight", command=search_flig
 search_button.grid(row=3, column=2, columnspan=3, pady=10)
 
 root.mainloop()
-
-
-
