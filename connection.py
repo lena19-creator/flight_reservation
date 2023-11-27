@@ -4,6 +4,8 @@ from tkinter import Tk, Label
 import pymysql
 from PIL import Image, ImageTk
 from customers import CustomerPage
+from guest import GuestPage
+from employee import EmployeePage
 
 
 class FlightReservationApp:
@@ -85,24 +87,43 @@ class FlightReservationApp:
         )
         cursor = conn.cursor()
 
-        select_query = "SELECT * FROM customers WHERE email = %s AND password = %s"
-        values = (email, password)
+        # Vérification pour les clients (customers)
+        select_customer_query = "SELECT * FROM customers WHERE email = %s AND password = %s"
+        customer_values = (email, password)
 
-        cursor.execute(select_query, values)
-        user_data = cursor.fetchone()
+        cursor.execute(select_customer_query, customer_values)
+        customer_data = cursor.fetchone()
 
-        if user_data:
-            print("Login successful!")
-            # Redirection vers la page des clients
+        # Vérification pour les employés (employees)
+        select_employee_query = "SELECT * FROM employee WHERE email = %s AND password = %s"
+        employee_values = (email, password)
+
+        cursor.execute(select_employee_query, employee_values)
+        employee_data = cursor.fetchone()
+
+        if customer_data:
+            is_customer = True
+            is_employee = False
             self.root.destroy()  # Fermer la fenêtre actuelle
-            customer_root = tk.Tk()
-            customer_app = CustomerPage(customer_root)
-            customer_root.mainloop()
+        elif employee_data:
+            is_employee = True
+            is_customer = False
+            self.root.destroy()  # Fermer la fenêtre actuelle
         else:
             print("Invalid login credentials")
 
         cursor.close()
         conn.close()
+
+        # Redirection en fonction des variables globales
+        if is_customer:
+            customer_root = tk.Tk()
+            customer_app = CustomerPage(customer_root)
+            customer_root.mainloop()
+        elif is_employee:
+            employee_root = tk.Tk()
+            employee_app = EmployeePage(employee_root)
+            employee_root.mainloop()
 
     def create_account(self):
         def save_to_database_from_input():
@@ -197,6 +218,11 @@ class FlightReservationApp:
             username = guest_name_entry.get()
             save_guest_to_database(username)
             guest_window.destroy()
+
+            self.root.destroy()  # Fermer la fenêtre actuelle de connexion
+            guest_root = tk.Tk()
+            guest_app = GuestPage(guest_root)
+            guest_root.mainloop()
 
         guest_window = tk.Toplevel(self.root)
         guest_window.title("Enter as a Guest")
