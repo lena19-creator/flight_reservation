@@ -104,7 +104,12 @@ class FlightReservationApp:
         if customer_data:
             is_customer = True
             is_employee = False
+            user_email = email  # Récupérer l'email de l'utilisateur
             self.root.destroy()  # Fermer la fenêtre actuelle
+            # Passer l'email à CustomerPage
+            customer_root = tk.Tk()
+            customer_app = CustomerPage(customer_root, user_email)
+            customer_root.mainloop()
         elif employee_data:
             is_employee = True
             is_customer = False
