@@ -57,7 +57,7 @@ class CustomerPage:
         self.add_buttons()
 
     def add_buttons(self):
-        button_frame = Frame(self.root, bg="black", bd=3)
+        button_frame = Frame(self.root, bg="white", bd=3)
         button_frame.place(relx=0.5, rely=0.6, anchor="center")
 
         info_button = Button(button_frame, text="Information of the Customer", command=self.show_customer_info,
