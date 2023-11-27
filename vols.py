@@ -8,7 +8,7 @@ class FlightApp:
         self.root.title("Flight Information")
 
         # Connect to MySQL
-        self.db = pymysql.connect(host='localhost', user='root', password='', database='air_reservation')
+        self.db = pymysql.connect(host='localhost', user='root', password='root', database='air_reservation',port=8889)
         self.cursor = self.db.cursor()
 
         # Create a frame to hold flight information, Buy buttons, and a vertical scrollbar
