@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import Label, Frame, Button, ttk
 from PIL import Image, ImageTk
 import pymysql
+import subprocess
 
 
 class EmployeePage:
@@ -187,7 +188,8 @@ class EmployeePage:
         pass
 
     def sales_analysis(self):
-        pass
+        subprocess.Popen(["python", "graph.py"])
+
 
 
 if __name__ == "__main__":

@@ -107,9 +107,7 @@ class CustomerPage:
             messagebox.showinfo("Customer Information", info_message)
 
     def show_flight_history(self):
-        # Logique pour afficher l'historique des vols
-        print("Display Flight History")
-        # ...
+        subprocess.Popen(["python", "history.py"])
 
     def search_flight(self):
         # Lancer le script research.py en tant que processus distinct
