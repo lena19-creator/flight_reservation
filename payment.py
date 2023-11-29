@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
+import pymysql
+from customers import CustomerPage
 
 def valider_paiement():
     numero_carte = numero_carte_entry.get()
@@ -13,7 +15,9 @@ def valider_paiement():
     elif len(code_secret) != 3 or not code_secret.isdigit():
         messagebox.showerror("Error", "INVALID SECRET CODE")
     else:
-        messagebox.showinfo("Payment sucessfull", "Paiement succesfull !")
+        messagebox.showinfo("Payment sucessfull", "Payment succesfull !")
+    paiement_valide = True
+
 
 # Création de la fenêtre principale
 root = tk.Tk()
@@ -37,5 +41,7 @@ code_secret_entry.pack()
 
 valider_button = tk.Button(root, text="Validate payment", command=valider_paiement)
 valider_button.pack()
+
+
 
 root.mainloop()

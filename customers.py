@@ -5,7 +5,6 @@ import pymysql
 from tkinter import messagebox
 import subprocess
 
-
 class CustomerPage:
     def __init__(self, root, user_email):
         self.root = root
@@ -115,6 +114,8 @@ class CustomerPage:
     def search_flight(self):
         # Lancer le script research.py en tant que processus distinct
         subprocess.Popen(["python", "research.py"])
+
+
 
 
 if __name__ == "__main__":

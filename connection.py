@@ -13,6 +13,10 @@ class FlightReservationApp:
         self.root = root
         self.root.title("Flight Reservation System")
 
+        self.is_customer = False
+        self.is_employee = False
+        self.user_email = None
+
         # Charger l'image de fond
         self.bg_image = tk.PhotoImage(file="avion.png")
         self.bg_label = tk.Label(self.root, image=self.bg_image)
@@ -102,18 +106,17 @@ class FlightReservationApp:
         employee_data = cursor.fetchone()
 
         if customer_data:
-            is_customer = True
-            is_employee = False
-            user_email = email  # Récupérer l'email de l'utilisateur
+            self.is_customer = True
+            self.user_email = email  # Stocker l'email de l'utilisateur dans self.user_email
             self.root.destroy()  # Fermer la fenêtre actuelle
-            # Passer l'email à CustomerPage
+
             customer_root = tk.Tk()
-            customer_app = CustomerPage(customer_root, user_email)
+            customer_app = CustomerPage(customer_root, self.user_email)
             customer_root.mainloop()
         elif employee_data:
-            is_employee = True
-            is_customer = False
+            self.is_employee = True
             self.root.destroy()  # Fermer la fenêtre actuelle
+
         else:
             print("Invalid login credentials")
 
@@ -121,11 +124,11 @@ class FlightReservationApp:
         conn.close()
 
         # Redirection en fonction des variables globales
-        if is_customer:
+        if self.is_customer:
             customer_root = tk.Tk()
-            customer_app = CustomerPage(customer_root)
+            customer_app = CustomerPage(customer_root, self.user_email)
             customer_root.mainloop()
-        elif is_employee:
+        elif self.is_employee:
             employee_root = tk.Tk()
             employee_app = EmployeePage(employee_root)
             employee_root.mainloop()

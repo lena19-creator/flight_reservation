@@ -3,7 +3,26 @@ from tkinter import ttk
 from tkcalendar import DateEntry
 import pymysql
 import subprocess
+from tkinter import simpledialog
 
+
+def get_customer_id(email):
+    conn = pymysql.connect(
+        host="localhost",
+        user="root",
+        password="root",
+        database="air_reservation",
+        port=8889
+    )
+    cursor = conn.cursor()
+
+    # Requête SQL pour récupérer customer_id en fonction de l'email
+    query = "SELECT customer_id FROM customers WHERE email = %s"
+    cursor.execute(query, (email,))
+    customer_id = cursor.fetchone()
+
+    conn.close()
+    return customer_id[0] if customer_id else None
 
 def search_flights():
     # Get values from the widgets for search
@@ -37,6 +56,8 @@ def search_flights():
     # Open the FlightApp window and pass the matching flights
     flight_app_window = tk.Toplevel(root)
     app = FlightApp(flight_app_window, matching_flights)
+
+
 
 
 class FlightApp:
@@ -75,11 +96,45 @@ class FlightApp:
         # Ouvre le fichier de paiement en tant que processus distinct
         subprocess.Popen(["python", "payment.py"])
 
+    def save_order(self, flight_id):
+        # Demander l'email dans une boîte de dialogue
+        email = simpledialog.askstring("Email", "Veuillez entrer votre email : ")
+
+        customer_id = get_customer_id(email)
+
+        if customer_id is not None:
+            total_price = 1000  # Remplacez cela par le prix réel du billet (peut provenir des données du vol sélectionné)
+            number_of_tickets = 1  # Vous pouvez ajouter cela dans l'interface
+
+            # flight_id = matching_flights[0][0]  # Inutile, vous avez déjà flight_id en argument
+
+            conn = pymysql.connect(
+                host="localhost",
+                user="root",
+                password="root",
+                database="air_reservation",
+                port=8889
+            )
+            cursor = conn.cursor()
+
+            # Insérer la commande dans la table orders
+            order_query = "INSERT INTO orders (order_id, customer_id, flight_id, number_of_tickets, total_price) " \
+                          "VALUES (NULL, %s, %s, %s, %s)"
+            cursor.execute(order_query, (customer_id, flight_id, number_of_tickets, total_price))
+            conn.commit()
+
+            conn.close()
+            print("La commande a été enregistrée avec succès.")
+
     def populate_frame(self, matching_flights):
         # Insert flight information into the inner frame
         for flight in matching_flights:
             flight_frame = ttk.Frame(self.inner_frame, relief=tk.RAISED, borderwidth=2)
             flight_frame.pack(fill=tk.X, padx=10, pady=5)
+            button_frame = ttk.Frame(self.inner_frame)
+            button_frame.pack(fill=tk.X, padx=10, pady=5)
+
+
 
             # Display flight information
             attributes = ["Departure City", "Arrival City", "Departure Time", "Arrival Time", "Ticket Price", "Class"]
@@ -95,6 +150,11 @@ class FlightApp:
             # Create a "Buy" button for each flight and bind the buy_flight method
             buy_button = ttk.Button(flight_frame, text="Buy", command=lambda id=flight[0]: self.buy_flight(id))
             buy_button.grid(row=1, columnspan=len(attributes) * 2, pady=10)
+
+            # Create Save button
+            save_button = ttk.Button(button_frame, text="Enregistrer commande",
+                                     command=lambda id=flight[0]: self.save_order(id))
+            save_button.pack(side=tk.LEFT, padx=5)
 
 
 root = tk.Tk()
