@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Label, Frame, Button, ttk
+from tkinter import Label, Frame, Button, ttk , Entry
 from PIL import Image, ImageTk
 import pymysql
 import subprocess
@@ -185,7 +185,40 @@ class EmployeePage:
                                       command=lambda: self.delete_flight(flight_id_to_delete))
         delete_flight_button.pack()
     def apply_discount(self):
-        pass
+        discount_window = tk.Toplevel(self.root)
+        tk.Label(discount_window, text="Select passenger type:").pack()
+        passenger_type_var = tk.StringVar()
+        tk.Radiobutton(discount_window, text="Children", variable=passenger_type_var, value="children").pack()
+        tk.Radiobutton(discount_window, text="Senior", variable=passenger_type_var, value="senior").pack()
+
+        tk.Label(discount_window, text="Enter discount percentage:").pack()
+        discount_percentage_entry = Entry(discount_window)
+        discount_percentage_entry.pack()
+
+        apply_discount_button = tk.Button(discount_window, text="Apply Discount",
+                                          command=lambda: self.apply_discount_to_flights(passenger_type_var.get(),
+                                                                                         discount_percentage_entry.get()))
+        apply_discount_button.pack()
+
+    def apply_discount_to_flights(self, passenger_type, discount_percentage):
+        # Retrieve flights based on passenger type
+        conn = pymysql.connect(host='localhost', user='root', password='', db='air_reservation')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM flight WHERE class = %s", (passenger_type,))
+        flights = cursor.fetchall()
+
+        # Apply discount to each flight
+        for flight in flights:
+            new_ticket_price = float(flight[4]) * (1 - float(discount_percentage) / 100)
+
+            # Update the flight with the new ticket price
+            update_query = "UPDATE flight SET ticket_price = %s WHERE flight_id = %s"
+            cursor.execute(update_query, (new_ticket_price, flight[0]))
+
+        conn.commit()
+        conn.close()
+
+        print(f"Discount applied to {len(flights)} {passenger_type} flights.")
 
     def sales_analysis(self):
         subprocess.Popen(["python", "graph.py"])

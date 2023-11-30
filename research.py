@@ -43,8 +43,8 @@ def search_flights():
     cursor = conn.cursor()
 
     # Construct the search query based on the selected criteria
-    flight_query = ("SELECT * FROM flight WHERE departure_city = %s AND arrival_city = %s AND departure_time = %s AND "
-                    "arrival_time = %s AND classe = %s")
+    flight_query = ("SELECT * FROM flight WHERE departure_city = %s AND arrival_city = %s AND DATE(departure_time) = DATE(%s) AND "
+                    "DATE(arrival_time) = DATE(%s) AND classe = %s")
     cursor.execute(flight_query, (departure_city, arrival_city, departure_time, arrival_time, classe))
     matching_flights = cursor.fetchall()
 
@@ -103,11 +103,6 @@ class FlightApp:
         customer_id = get_customer_id(email)
 
         if customer_id is not None:
-            total_price = 1000  # Remplacez cela par le prix réel du billet (peut provenir des données du vol sélectionné)
-            number_of_tickets = 1  # Vous pouvez ajouter cela dans l'interface
-
-            # flight_id = matching_flights[0][0]  # Inutile, vous avez déjà flight_id en argument
-
             conn = pymysql.connect(
                 host="localhost",
                 user="root",
@@ -117,9 +112,17 @@ class FlightApp:
             )
             cursor = conn.cursor()
 
+            # Obtenir le prix du billet à partir de la base de données
+            ticket_price_query = "SELECT ticket_price FROM flight WHERE flight_id = %s"
+            cursor.execute(ticket_price_query, (flight_id,))
+            ticket_price = cursor.fetchone()[0]
+
+            number_of_tickets = 1  # Vous pouvez ajouter cela dans l'interface
+
             # Insérer la commande dans la table orders
             order_query = "INSERT INTO orders (order_id, customer_id, flight_id, number_of_tickets, total_price) " \
                           "VALUES (NULL, %s, %s, %s, %s)"
+            total_price = number_of_tickets * ticket_price
             cursor.execute(order_query, (customer_id, flight_id, number_of_tickets, total_price))
             conn.commit()
 
