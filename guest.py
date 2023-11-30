@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import Label, Frame , Button
 from PIL import Image, ImageTk
-import pymysql
+
+import subprocess
 
 
 class GuestPage:
@@ -39,13 +40,10 @@ class GuestPage:
         search_flight_button.pack(pady=10)
 
 
-
-
-
     def search_flight(self):
-        # Logique pour la recherche de vol
-        print("Search Flight")
-        # ...
+
+        subprocess.Popen(["python", "researchguest.py"])
+
 
 
 

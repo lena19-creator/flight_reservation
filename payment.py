@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import pymysql
-from customers import CustomerPage
+import subprocess
 
 def valider_paiement():
     numero_carte = numero_carte_entry.get()
@@ -15,9 +14,12 @@ def valider_paiement():
     elif len(code_secret) != 3 or not code_secret.isdigit():
         messagebox.showerror("Error", "INVALID SECRET CODE")
     else:
-        messagebox.showinfo("Payment sucessfull", "Payment succesfull !")
-    paiement_valide = True
-
+        messagebox.showinfo("Payment successful", "Payment successful!")
+        root.destroy()  # Fermer la fenêtre de paiement
+        subprocess.Popen(["python", "connection.py"])  # Ouvrir le fichier connection.py
+        # subprocess.Popen(["python3", "connection.py"])  # Utilisez cette ligne pour Python 3.x
+        # subprocess.Popen(["python", "-m", "connection"])  # Utilisez cette ligne pour exécuter un module python (si connection.py est un module)
+        # Assurez-vous de donner le bon chemin vers connection.py si le fichier n'est pas dans le même répertoire
 
 # Création de la fenêtre principale
 root = tk.Tk()
@@ -42,6 +44,5 @@ code_secret_entry.pack()
 valider_button = tk.Button(root, text="Validate payment", command=valider_paiement)
 valider_button.pack()
 
-
-
 root.mainloop()
+

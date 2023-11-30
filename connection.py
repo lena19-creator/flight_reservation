@@ -149,7 +149,7 @@ class FlightReservationApp:
         create_account_window.title("Create an Account")
 
         tk.Label(create_account_window, text="Customer Type:").pack()
-        customer_types = ["Regular", "Senior", "Children"]
+        customer_types = ["Regular", "Senior"]
         customer_type_var = tk.StringVar()
         customer_type_var.set(customer_types[0])  # Définir la valeur par défaut
         customer_type_menu = tk.OptionMenu(create_account_window, customer_type_var, *customer_types)

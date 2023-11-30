@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Label, Frame , Button
+from tkinter import Label, Frame , Button , Entry
 from PIL import Image, ImageTk
 import pymysql
 from tkinter import messagebox
@@ -30,7 +30,7 @@ class CustomerPage:
 
         # Créer un cadre pour afficher les détails de la personne connectée
         self.details_frame = Frame(self.root, bg="#FFFFFF")
-        self.details_frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.details_frame.place(relx=0.5, rely=0.5, anchor="se")
 
         self.add_buttons()
 
@@ -50,6 +50,11 @@ class CustomerPage:
         flight_history_button = Button(button_frame, text="My Flight History", command=self.show_flight_history,
                                        font=("Arial", 12), bg="#f44336", fg="black",activeforeground="white", padx=10, pady=5)
         flight_history_button.pack(pady=10)
+
+        modify_info_button = Button(button_frame, text="Modifier les informations", command=self.show_modify_info_frame,
+                                    font=("Arial", 12), bg="#ff9800", fg="black", activeforeground="white", padx=10,
+                                    pady=5)
+        modify_info_button.pack(pady=10)
 
 
 
@@ -105,6 +110,68 @@ class CustomerPage:
             # Afficher une boîte de dialogue si les détails ont déjà été récupérés
             info_message = f"Email: {self.user_details['email']}\nUsername: {self.user_details['username']}\nName: {self.user_details['name']}\nPhone: {self.user_details['phone']}\nCustomer Type: {self.user_details['customer_type']}"
             messagebox.showinfo("Customer Information", info_message)
+
+    def show_modify_info_frame(self):
+        if not self.user_details:
+            self.user_details = self.get_user_details()
+
+        if self.user_details:
+            # Effacer le cadre d'information
+            for widget in self.details_frame.winfo_children():
+                widget.destroy()
+
+            # Afficher les champs d'entrée pour modifier les informations
+            email_entry = Entry(self.details_frame, font=("Arial", 12))
+            email_entry.insert(0, self.user_details['email'])
+            email_entry.pack()
+
+            phone_entry = Entry(self.details_frame, font=("Arial", 12))
+            phone_entry.insert(0, self.user_details['phone'])
+            phone_entry.pack()
+
+            name_entry = Entry(self.details_frame, font=("Arial", 12))
+            name_entry.insert(0, self.user_details['name'])
+            name_entry.pack()
+
+            save_button = Button(self.details_frame, text="Enregistrer",
+                                 command=lambda: self.save_changes(email_entry.get(), phone_entry.get(),
+                                                                   name_entry.get()),
+                                 font=("Arial", 12), bg="#2196F3", fg="black", activeforeground="white", padx=10,
+                                 pady=5)
+            save_button.pack(pady=10)
+        else:
+            error_label = Label(self.details_frame, text="Error!", font=("Arial", 12))
+            error_label.pack()
+
+    def save_changes(self, new_email, new_phone, new_name):
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            db='air_reservation',
+            port=8889
+        )
+        cursor = conn.cursor()
+
+        if new_email:
+            update_email_query = "UPDATE customers SET email = %s WHERE email = %s"
+            cursor.execute(update_email_query, (new_email, self.user_details['email']))
+            self.user_details['email'] = new_email
+
+        if new_phone:
+            update_phone_query = "UPDATE customers SET phone = %s WHERE email = %s"
+            cursor.execute(update_phone_query, (new_phone, self.user_details['email']))
+            self.user_details['phone'] = new_phone
+
+        if new_name:
+            update_name_query = "UPDATE customers SET name = %s WHERE email = %s"
+            cursor.execute(update_name_query, (new_name, self.user_details['email']))
+            self.user_details['name'] = new_name
+
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Changes have been saved successfully!")
 
     def show_flight_history(self):
         subprocess.Popen(["python", "history.py"])
