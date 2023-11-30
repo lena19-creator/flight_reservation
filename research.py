@@ -117,12 +117,18 @@ class FlightApp:
             cursor.execute(ticket_price_query, (flight_id,))
             ticket_price = cursor.fetchone()[0]
 
-            number_of_tickets = 1  # Vous pouvez ajouter cela dans l'interface
+            # Récupérer le nombre de billets à partir de l'interface utilisateur
+            number_of_tickets = int(simpledialog.askstring("Tickets", "Veuillez entrer le nombre de billets : "))
+
+            # Calculer le prix total
+            total_price = number_of_tickets * ticket_price
+
+            # Afficher le prix total
+            tk.messagebox.showinfo("Prix total", f"Le prix total est de : {total_price} €")
 
             # Insérer la commande dans la table orders
             order_query = "INSERT INTO orders (order_id, customer_id, flight_id, number_of_tickets, total_price) " \
                           "VALUES (NULL, %s, %s, %s, %s)"
-            total_price = number_of_tickets * ticket_price
             cursor.execute(order_query, (customer_id, flight_id, number_of_tickets, total_price))
             conn.commit()
 
@@ -155,7 +161,7 @@ class FlightApp:
             buy_button.grid(row=1, columnspan=len(attributes) * 2, pady=10)
 
             # Create Save button
-            save_button = ttk.Button(button_frame, text="Enregistrer commande",
+            save_button = ttk.Button(button_frame, text="Enregistrer commande et choisir le nombre de ticket ",
                                      command=lambda id=flight[0]: self.save_order(id))
             save_button.pack(side=tk.LEFT, padx=5)
 
