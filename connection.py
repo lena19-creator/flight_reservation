@@ -17,20 +17,20 @@ class FlightReservationApp:
         self.is_employee = False
         self.user_email = None
 
-        # Charger l'image de fond
+        # background image
         self.bg_image = tk.PhotoImage(file="avion.png")
         self.bg_label = tk.Label(self.root, image=self.bg_image)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.logo_image = Image.open("logo3.png")
-        self.logo_image = self.logo_image.resize((100, 100))  # Redimensionner sans antialiasing
+        self.logo_image = self.logo_image.resize((100, 100))
         self.logo_photo = ImageTk.PhotoImage(self.logo_image)
 
-        # Créer un label pour afficher le logo au-dessus de la barre rose
+        # Label creation to display the logo
         self.logo_label = Label(self.root, image=self.logo_photo, bg="#000000")
         self.logo_label.place(x=1320, y=60)
 
-        # En-tête avec un bouton "Bienvenue"
+
         self.header = tk.Frame(self.root, bg="#FFE4E1")
         self.header.pack(side="top", fill="x")
 
@@ -38,7 +38,7 @@ class FlightReservationApp:
         self.welcome_button = tk.Button(self.header, text="Welcome", command=self.show_bienvenue, font=button_font)
         self.welcome_button.pack(side="left")
 
-        # Créer un cadre pour le formulaire
+        # creation of the bordure for the form
         self.form_frame = tk.Frame(self.root, bg="#f0f0f0", bd=2)
 
         self.email_label = tk.Label(self.form_frame, text="Email", bg="#f0f0f0", fg="#333", font=("Arial", 12))
@@ -81,7 +81,7 @@ class FlightReservationApp:
         email = self.txtuserid.get()
         password = self.txtpassword.get()
 
-        # Connexion à la base de données MySQL
+        # connexion to the data base
         conn = pymysql.connect(
             host='localhost',
             user='root',
@@ -91,14 +91,14 @@ class FlightReservationApp:
         )
         cursor = conn.cursor()
 
-        # Vérification pour les clients (customers)
+        # Verification for customers
         select_customer_query = "SELECT * FROM customers WHERE email = %s AND password = %s"
         customer_values = (email, password)
 
         cursor.execute(select_customer_query, customer_values)
         customer_data = cursor.fetchone()
 
-        # Vérification pour les employés (employees)
+        # Verification for employees
         select_employee_query = "SELECT * FROM employee WHERE email = %s AND password = %s"
         employee_values = (email, password)
 
@@ -107,15 +107,15 @@ class FlightReservationApp:
 
         if customer_data:
             self.is_customer = True
-            self.user_email = email  # Stocker l'email de l'utilisateur dans self.user_email
-            self.root.destroy()  # Fermer la fenêtre actuelle
+            self.user_email = email  # Stock user email in self.user_email
+            self.root.destroy()  # close actual windows
 
             customer_root = tk.Tk()
             customer_app = CustomerPage(customer_root, self.user_email)
             customer_root.mainloop()
         elif employee_data:
             self.is_employee = True
-            self.root.destroy()  # Fermer la fenêtre actuelle
+            self.root.destroy()  # close actual windows
 
         else:
             print("Invalid login credentials")
@@ -123,7 +123,7 @@ class FlightReservationApp:
         cursor.close()
         conn.close()
 
-        # Redirection en fonction des variables globales
+        # Redirection
         if self.is_customer:
             customer_root = tk.Tk()
             customer_app = CustomerPage(customer_root, self.user_email)
@@ -151,11 +151,11 @@ class FlightReservationApp:
         tk.Label(create_account_window, text="Customer Type:").pack()
         customer_types = ["Regular", "Senior"]
         customer_type_var = tk.StringVar()
-        customer_type_var.set(customer_types[0])  # Définir la valeur par défaut
+        customer_type_var.set(customer_types[0])
         customer_type_menu = tk.OptionMenu(create_account_window, customer_type_var, *customer_types)
         customer_type_menu.pack()
 
-        # Ajouter des labels pour chaque champ
+        # Add label
 
         tk.Label(create_account_window, text="Username:").pack()
         username_entry = tk.Entry(create_account_window)
@@ -195,9 +195,9 @@ class FlightReservationApp:
                 cursor.execute(sql, ('regular', username, password, name, email, phone))
                 conn.commit()
                 print(
-                    f"Creating account for {username}, Name: {name}, Email: {email}, Phone: {phone}")  # Affiche un message de réussite dans la console
+                    f"Creating account for {username}, Name: {name}, Email: {email}, Phone: {phone}")  # display a successfull message
         except pymysql.Error as e:
-            print(f"Error in database: {e}")  # Affiche l'erreur dans la console en cas d'échec
+            print(f"Error in database: {e}")  # display error
         finally:
             conn.close()
 
@@ -212,13 +212,13 @@ class FlightReservationApp:
             )
             try:
                 with conn.cursor() as cursor:
-                    # Insertion des données dans la table guest
+                    # Insertion of the data
                     sql = "INSERT INTO guest (username) VALUES (%s)"
                     cursor.execute(sql, (username,))
                     conn.commit()
-                    print(f"Entering as guest: {username}")  # Message de réussite
+                    print(f"Entering as guest: {username}")
             except pymysql.Error as e:
-                print(f"Error in database: {e}")  # Affiche l'erreur en cas d'échec
+                print(f"Error in database: {e}")
             finally:
                 conn.close()
 
@@ -227,7 +227,7 @@ class FlightReservationApp:
             save_guest_to_database(username)
             guest_window.destroy()
 
-            self.root.destroy()  # Fermer la fenêtre actuelle de connexion
+            self.root.destroy()
             guest_root = tk.Tk()
             guest_app = GuestPage(guest_root)
             guest_root.mainloop()

@@ -76,24 +76,24 @@ class FlightApp:
         self.populate_frame(matching_flights)
 
     def buy_flight(self, flight_id):
-        # Ouvre le fichier de paiement en tant que processus distinct
+
         subprocess.Popen(["python", "payment.py"])
 
     def save_order(self, flight_id):
 
 
-            # Obtenir le prix du billet à partir de la base de données
+
             ticket_price_query = "SELECT ticket_price FROM flight WHERE flight_id = %s"
             cursor.execute(ticket_price_query, (flight_id,))
             ticket_price = cursor.fetchone()[0]
 
-            # Récupérer le nombre de billets à partir de l'interface utilisateur
+
             number_of_tickets = int(simpledialog.askstring("Tickets", "Veuillez entrer le nombre de billets : "))
 
-            # Calculer le prix total
+
             total_price = number_of_tickets * ticket_price
 
-            # Afficher le prix total
+
             tk.messagebox.showinfo("Prix total", f"Le prix total est de : {total_price} €")
 
 
@@ -124,7 +124,7 @@ class FlightApp:
             buy_button.grid(row=1, columnspan=len(attributes) * 2, pady=10)
 
             # Create Save button
-            save_button = ttk.Button(button_frame, text="choisir le nombre de ticket ",
+            save_button = ttk.Button(button_frame, text="choose the number of tickets ",
                                      command=lambda id=flight[0]: self.save_order(id))
             save_button.pack(side=tk.LEFT, padx=5)
 

@@ -5,7 +5,6 @@ import pymysql
 import subprocess
 from tkinter import simpledialog
 
-
 def get_customer_id(email):
     conn = pymysql.connect(
         host="localhost",
@@ -16,7 +15,7 @@ def get_customer_id(email):
     )
     cursor = conn.cursor()
 
-    # Requête SQL pour récupérer customer_id en fonction de l'email
+    # SQL query to retrieve customer_id based on email
     query = "SELECT customer_id FROM customers WHERE email = %s"
     cursor.execute(query, (email,))
     customer_id = cursor.fetchone()
@@ -93,11 +92,10 @@ class FlightApp:
         self.populate_frame(matching_flights)
 
     def buy_flight(self, flight_id):
-        # Ouvre le fichier de paiement en tant que processus distinct
         subprocess.Popen(["python", "payment.py"])
 
     def save_order(self, flight_id):
-        # Demander l'email dans une boîte de dialogue
+
         email = simpledialog.askstring("Email", "Veuillez entrer votre email : ")
 
         customer_id = get_customer_id(email)
@@ -112,28 +110,28 @@ class FlightApp:
             )
             cursor = conn.cursor()
 
-            # Obtenir le prix du billet à partir de la base de données
+            # Get ticket price from database
             ticket_price_query = "SELECT ticket_price FROM flight WHERE flight_id = %s"
             cursor.execute(ticket_price_query, (flight_id,))
             ticket_price = cursor.fetchone()[0]
 
-            # Récupérer le nombre de billets à partir de l'interface utilisateur
-            number_of_tickets = int(simpledialog.askstring("Tickets", "Veuillez entrer le nombre de billets : "))
+            # Retrieve ticket count from UI
+            number_of_tickets = int(simpledialog.askstring("Tickets", "Please enter the number of tickets : "))
 
-            # Calculer le prix total
+            #Calculate the total price
             total_price = number_of_tickets * ticket_price
 
-            # Afficher le prix total
-            tk.messagebox.showinfo("Prix total", f"Le prix total est de : {total_price} €")
+            # display total price
+            tk.messagebox.showinfo("Total price", f" The total price is : {total_price} €")
 
-            # Insérer la commande dans la table orders
+            # data in data base
             order_query = "INSERT INTO orders (order_id, customer_id, flight_id, number_of_tickets, total_price) " \
                           "VALUES (NULL, %s, %s, %s, %s)"
             cursor.execute(order_query, (customer_id, flight_id, number_of_tickets, total_price))
             conn.commit()
 
             conn.close()
-            print("La commande a été enregistrée avec succès.")
+            print("The order has been successfully registered.")
 
     def populate_frame(self, matching_flights):
         # Insert flight information into the inner frame
@@ -161,7 +159,7 @@ class FlightApp:
             buy_button.grid(row=1, columnspan=len(attributes) * 2, pady=10)
 
             # Create Save button
-            save_button = ttk.Button(button_frame, text="Enregistrer commande et choisir le nombre de ticket ",
+            save_button = ttk.Button(button_frame, text="Register order and choose the number of tickets",
                                      command=lambda id=flight[0]: self.save_order(id))
             save_button.pack(side=tk.LEFT, padx=5)
 

@@ -15,17 +15,14 @@ def valider_paiement():
         messagebox.showerror("Error", "INVALID SECRET CODE")
     else:
         messagebox.showinfo("Payment successful", "Payment successful!")
-        root.destroy()  # Fermer la fenêtre de paiement
-        subprocess.Popen(["python", "connection.py"])  # Ouvrir le fichier connection.py
-        # subprocess.Popen(["python3", "connection.py"])  # Utilisez cette ligne pour Python 3.x
-        # subprocess.Popen(["python", "-m", "connection"])  # Utilisez cette ligne pour exécuter un module python (si connection.py est un module)
-        # Assurez-vous de donner le bon chemin vers connection.py si le fichier n'est pas dans le même répertoire
+        root.destroy()  # close the payment window
+        subprocess.Popen(["python", "connection.py"])
 
-# Création de la fenêtre principale
+# Creation of the main
 root = tk.Tk()
 root.title("flight payment")
 
-# Création des champs de saisie
+# Creating input fields
 numero_carte_label = tk.Label(root, text="card number :")
 numero_carte_label.pack()
 numero_carte_entry = tk.Entry(root)

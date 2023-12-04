@@ -4,7 +4,7 @@ import tkinter as tk
 import pymysql
 
 def display_flight_orders():
-    # Connexion à la base de données MySQL
+    # Connection to the data base
     conn = pymysql.connect(
         host="localhost",
         user="root",
@@ -14,7 +14,7 @@ def display_flight_orders():
     )
     cursor = conn.cursor()
 
-    # Requête pour récupérer le nombre de commandes par vol avec les détails de départ et d'arrivée
+    # Request to pour have the number of order of the flight
     query = "SELECT f.departure_city, f.arrival_city, COUNT(o.flight_id) as num_orders " \
             "FROM flight f LEFT JOIN orders o ON f.flight_id = o.flight_id GROUP BY f.flight_id"
     cursor.execute(query)
@@ -29,20 +29,20 @@ def display_flight_orders():
         num_orders.append(row[2])
         destinations.append(f"{departure} - {arrival}")
 
-    # Création du graphique en barres
+    # Creation of the graphics
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.bar(destinations, num_orders, color='blue')
-    ax.set_xlabel('Destinations (Départ - Arrivée)')
-    ax.set_ylabel('Nombre de commandes')
-    ax.set_title('Nombre de commandes par vol')
+    ax.set_xlabel('Destination (Departure - Arrival)')
+    ax.set_ylabel('Number of order')
+    ax.set_title('Number of order by flight')
 
-    # Rotation des étiquettes de l'axe des abscisses pour éviter le chevauchement
+    # Rotation
     plt.xticks(rotation=45, ha='right')
 
-    # Fermeture de la connexion à la base de données
+
     conn.close()
 
-    # Affichage du graphique dans une fenêtre tkinter
+    # display
     root = tk.Tk()
     root.title('Graphique des commandes par vol')
 
@@ -52,6 +52,6 @@ def display_flight_orders():
 
     tk.mainloop()
 
-# Appel de la fonction pour afficher le graphique
+
 display_flight_orders()
 

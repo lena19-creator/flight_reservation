@@ -11,19 +11,19 @@ class GuestPage:
         self.root.title("Welcome to your Guest Page")
 
 
-        # Charger l'image de fond
+
         self.bg_image = Image.open("image4.png")
-        self.bg_image = self.bg_image.resize((1200, 800))  # Redimensionner l'image
+        self.bg_image = self.bg_image.resize((1200, 800))
         self.bg_photo = ImageTk.PhotoImage(self.bg_image)
 
         self.bg_label = Label(self.root, image=self.bg_photo)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.logo_image = Image.open("logo3.png")
-        self.logo_image = self.logo_image.resize((100, 100))  # Redimensionner le logo
+        self.logo_image = self.logo_image.resize((100, 100))
         self.logo_photo = ImageTk.PhotoImage(self.logo_image)
 
-        # Créer un label pour afficher le logo au-dessus de la barre rose
+
         self.logo_label = Label(self.root, image=self.logo_photo, bg="#000000")
         self.logo_label.place(x=1320, y=60)
 

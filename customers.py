@@ -10,25 +10,25 @@ class CustomerPage:
         self.root = root
         self.root.title("Welcome to your Customer Page")
         self.user_email = user_email
-        self.user_details = None  # Initialiser user_details comme None
+        self.user_details = None  # Initialisation of user_details as None
 
         # Charger l'image de fond
         self.bg_image = Image.open("image2.png")
-        self.bg_image = self.bg_image.resize((1200, 800))  # Redimensionner l'image
+        self.bg_image = self.bg_image.resize((1200, 800))  # picture dimension
         self.bg_photo = ImageTk.PhotoImage(self.bg_image)
 
         self.bg_label = Label(self.root, image=self.bg_photo)
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.logo_image = Image.open("logo3.png")
-        self.logo_image = self.logo_image.resize((100, 100))  # Redimensionner le logo
+        self.logo_image = self.logo_image.resize((100, 100))  # logo dimension
         self.logo_photo = ImageTk.PhotoImage(self.logo_image)
 
-        # Créer un label pour afficher le logo au-dessus de la barre rose
+
         self.logo_label = Label(self.root, image=self.logo_photo, bg="#000000")
         self.logo_label.place(x=1320, y=60)
 
-        # Créer un cadre pour afficher les détails de la personne connectée
+        # display of the detail of the connected person
         self.details_frame = Frame(self.root, bg="#FFFFFF")
         self.details_frame.place(relx=0.5, rely=0.5, anchor="se")
 
@@ -51,7 +51,7 @@ class CustomerPage:
                                        font=("Arial", 12), bg="#f44336", fg="black",activeforeground="white", padx=10, pady=5)
         flight_history_button.pack(pady=10)
 
-        modify_info_button = Button(button_frame, text="Modifier les informations", command=self.show_modify_info_frame,
+        modify_info_button = Button(button_frame, text="Modify information ", command=self.show_modify_info_frame,
                                     font=("Arial", 12), bg="#ff9800", fg="black", activeforeground="white", padx=10,
                                     pady=5)
         modify_info_button.pack(pady=10)
@@ -59,7 +59,7 @@ class CustomerPage:
 
 
     def get_user_details(self):
-        # Connectez-vous à la base de données et récupérez les détails de l'utilisateur
+        # Connection to the data base
         conn = pymysql.connect(
             host='localhost',
             user='root',
@@ -70,7 +70,7 @@ class CustomerPage:
         cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         select_query = "SELECT * FROM customers WHERE email = %s"
-        cursor.execute(select_query, (self.user_email,))  # Utiliser l'email stocké
+        cursor.execute(select_query, (self.user_email,))
         user_data = cursor.fetchone()
 
         cursor.close()
@@ -80,10 +80,10 @@ class CustomerPage:
 
     def show_customer_info(self):
         if not self.user_details:
-            # Récupérer les détails du client
+            # details of the customer
             self.user_details = self.get_user_details()
 
-            # Afficher les détails dans le cadre
+            # display details
             if self.user_details:
                 email_label = Label(self.details_frame, text=f"Email: {self.user_details['email']}", font=("Arial", 12))
                 email_label.pack()
@@ -107,7 +107,7 @@ class CustomerPage:
                 error_label.pack()
 
         else:
-            # Afficher une boîte de dialogue si les détails ont déjà été récupérés
+            # dialog boxe
             info_message = f"Email: {self.user_details['email']}\nUsername: {self.user_details['username']}\nName: {self.user_details['name']}\nPhone: {self.user_details['phone']}\nCustomer Type: {self.user_details['customer_type']}"
             messagebox.showinfo("Customer Information", info_message)
 
@@ -116,11 +116,11 @@ class CustomerPage:
             self.user_details = self.get_user_details()
 
         if self.user_details:
-            # Effacer le cadre d'information
+
             for widget in self.details_frame.winfo_children():
                 widget.destroy()
 
-            # Afficher les champs d'entrée pour modifier les informations
+
             email_entry = Entry(self.details_frame, font=("Arial", 12))
             email_entry.insert(0, self.user_details['email'])
             email_entry.pack()
@@ -177,7 +177,6 @@ class CustomerPage:
         subprocess.Popen(["python", "history.py"])
 
     def search_flight(self):
-        # Lancer le script research.py en tant que processus distinct
         subprocess.Popen(["python", "research.py"])
 
 

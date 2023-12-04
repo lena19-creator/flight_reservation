@@ -94,41 +94,41 @@ class EmployeePage:
             self.flight_window.destroy()
 
     def add_flight(self):
-        # Créer une nouvelle fenêtre pour ajouter un vol
+        # Creation of a window to add a flight
         self.add_window = tk.Toplevel(self.root)
-        self.add_window.title("Ajouter un Vol")
+        self.add_window.title("Add a flight ")
 
-        # Champs de saisie pour les détails du vol
-        tk.Label(self.add_window, text="ID du Vol: ").pack()
+
+        tk.Label(self.add_window, text="ID of the flight: ").pack()
         entry_flight_id = tk.Entry(self.add_window)
         entry_flight_id.pack()
 
-        tk.Label(self.add_window, text="Ville de Départ: ").pack()
+        tk.Label(self.add_window, text="City of departure: ").pack()
         entry_departure_city = tk.Entry(self.add_window)
         entry_departure_city.pack()
 
-        tk.Label(self.add_window, text="Ville d'Arrivée: ").pack()
+        tk.Label(self.add_window, text="City of arrival: ").pack()
         entry_arrival_city = tk.Entry(self.add_window)
         entry_arrival_city.pack()
 
-        tk.Label(self.add_window, text="Heure de Départ: ").pack()
+        tk.Label(self.add_window, text="Hour of departure: ").pack()
         entry_departure_time = tk.Entry(self.add_window)
         entry_departure_time.pack()
 
-        tk.Label(self.add_window, text="Heure d'Arrivée: ").pack()
+        tk.Label(self.add_window, text="Hour of arrival: ").pack()
         entry_arrival_time = tk.Entry(self.add_window)
         entry_arrival_time.pack()
 
-        tk.Label(self.add_window, text="Prix du Billet: ").pack()
+        tk.Label(self.add_window, text="Price of the ticket: ").pack()
         entry_ticket_price = tk.Entry(self.add_window)
         entry_ticket_price.pack()
 
-        tk.Label(self.add_window, text="Classe: ").pack()
+        tk.Label(self.add_window, text="Class: ").pack()
         entry_class = tk.Entry(self.add_window)
         entry_class.pack()
 
-        # Bouton "Enregistrer" pour ajouter le vol
-        save_button = tk.Button(self.add_window, text="Enregistrer",
+        # button register to add the flight
+        save_button = tk.Button(self.add_window, text="register",
                                 command=lambda: self.save_flight(entry_flight_id.get(),
                                                                  entry_departure_city.get(),
                                                                  entry_arrival_city.get(),
@@ -140,11 +140,11 @@ class EmployeePage:
 
     def save_flight(self, flight_id, departure_city, arrival_city, departure_time, arrival_time, ticket_price,
                     flight_class):
-        # Insérer ces valeurs dans la base de données (INSERT INTO...)
+        # Insertion of the data
         conn = pymysql.connect(host='localhost', user='root', password='root', db='air_reservation', port=8889)
         cursor = conn.cursor()
 
-        # Exemple d'insertion dans la table flight (veuillez ajuster la requête en fonction de votre base de données)
+
         insert_query = "INSERT INTO flight (flight_id, departure_city, arrival_city, departure_time, arrival_time, ticket_price, classe) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         cursor.execute(insert_query, (
         flight_id, departure_city, arrival_city, departure_time, arrival_time, ticket_price, flight_class))
@@ -152,7 +152,7 @@ class EmployeePage:
         conn.commit()
         conn.close()
 
-        # Fermer la fenêtre après avoir ajouté le vol
+
         self.add_window.destroy()
 
     def delete_flight(self):
@@ -163,14 +163,14 @@ class EmployeePage:
             conn = pymysql.connect(host='localhost', user='root', password='root', db='air_reservation', port=8889)
             cursor = conn.cursor()
 
-            # Requête SQL pour supprimer un vol en fonction de son ID
+            # delete flight
             delete_query = "DELETE FROM flight WHERE flight_id = %s"
 
             try:
                 cursor.execute(delete_query, (flight_id,))
                 conn.commit()
                 print(f"Flight {flight_id} deleted successfully!")
-                self.load_all_flights()  # Recharge les vols après suppression
+                self.load_all_flights()
             except pymysql.Error as e:
                 conn.rollback()
                 print(f"Error deleting flight: {e}")

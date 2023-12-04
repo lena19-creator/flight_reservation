@@ -2,16 +2,17 @@ import tkinter as tk
 from tkinter import ttk
 import pymysql
 
+
 def get_customer_orders():
     def search_orders():
-        # Récupérer l'email ou l'ID client selon le champ rempli
+        # Retrieve the email or customer ID depending on the filled field
         search_value = search_entry.get()
         if search_by.get() == "Email":
             query = "SELECT * FROM customers WHERE email = %s"
         else:
             query = "SELECT * FROM customers WHERE customer_id = %s"
 
-        # Se connecter à la base de données et exécuter la requête
+
         conn = pymysql.connect(
             host="localhost",
             user="root",
@@ -27,12 +28,12 @@ def get_customer_orders():
         if customer_info:
             customer_id = customer_info[0]
 
-            # Requête pour récupérer l'historique des commandes du client
+            # Query to retrieve customer order history
             order_query = "SELECT * FROM orders WHERE customer_id = %s"
             cursor.execute(order_query, (customer_id,))
             orders = cursor.fetchall()
 
-            # Affichage des commandes dans la fenêtre
+            #Displaying commands in the window
             orders_text.delete(1.0, tk.END)
             for order in orders:
                 orders_text.insert(tk.END, f"Order ID: {order[0]}\n"
@@ -40,13 +41,14 @@ def get_customer_orders():
                                             f"Number of Tickets: {order[3]}\n"
                                             f"Total Price: {order[4]}\n\n")
 
+
         else:
             orders_text.delete(1.0, tk.END)
             orders_text.insert(tk.END, "Customer not found!")
 
         conn.close()
 
-    # Configuration de la fenêtre principale
+    # Configuring the main
     root = tk.Tk()
     root.title("Customer Orders History")
 
@@ -68,5 +70,5 @@ def get_customer_orders():
 
     root.mainloop()
 
-# Appel de la fonction pour afficher l'interface
+
 get_customer_orders()
