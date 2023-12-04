@@ -184,6 +184,41 @@ class EmployeePage:
         delete_flight_button = Button(self.root, text="Delete Flight",
                                       command=lambda: self.delete_flight(flight_id_to_delete))
         delete_flight_button.pack()
+
+    def apply_discount_to_orders(self, discount_percentage):
+        # Connect to the database
+        conn = pymysql.connect(host='localhost', user='root', password='root', db='air_reservation',port=8889)
+        cursor = conn.cursor()
+
+        # Retrieve orders from the database
+        cursor.execute("SELECT * FROM orders")
+        orders = cursor.fetchall()
+
+        # Apply discount to each order
+        for order in orders:
+            customer_id = order[1]  # Assuming the structure of the orders table, adjust if needed
+
+            # Retrieve customer_type from the customers table
+            cursor.execute("SELECT customer_type FROM customers WHERE customer_id = %s", (customer_id,))
+            customer_type_result = cursor.fetchone()
+
+            if customer_type_result:
+                customer_type = customer_type_result[0]
+
+                # Check if the customer_type is senior or children
+                if customer_type in ["senior", "children"]:
+                    # Apply the discount to the total_price
+                    total_price = float(order[4]) * (1 - float(discount_percentage) / 100)
+
+                    # Update the order with the new total_price
+                    update_query = "UPDATE orders SET total_price = %s WHERE order_id = %s"
+                    cursor.execute(update_query, (total_price, order[0]))
+
+        conn.commit()
+        conn.close()
+
+        print(f"Discount applied to orders for special customers.")
+
     def apply_discount(self):
         discount_window = tk.Toplevel(self.root)
         tk.Label(discount_window, text="Select passenger type:").pack()
@@ -196,29 +231,11 @@ class EmployeePage:
         discount_percentage_entry.pack()
 
         apply_discount_button = tk.Button(discount_window, text="Apply Discount",
-                                          command=lambda: self.apply_discount_to_flights(passenger_type_var.get(),
-                                                                                         discount_percentage_entry.get()))
+                                          command=lambda: self.apply_discount_to_orders(
+                                              discount_percentage_entry.get()))
         apply_discount_button.pack()
 
-    def apply_discount_to_flights(self, passenger_type, discount_percentage):
-        # Retrieve flights based on passenger type
-        conn = pymysql.connect(host='localhost', user='root', password='', db='air_reservation')
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM flight WHERE class = %s", (passenger_type,))
-        flights = cursor.fetchall()
 
-        # Apply discount to each flight
-        for flight in flights:
-            new_ticket_price = float(flight[4]) * (1 - float(discount_percentage) / 100)
-
-            # Update the flight with the new ticket price
-            update_query = "UPDATE flight SET ticket_price = %s WHERE flight_id = %s"
-            cursor.execute(update_query, (new_ticket_price, flight[0]))
-
-        conn.commit()
-        conn.close()
-
-        print(f"Discount applied to {len(flights)} {passenger_type} flights.")
 
     def sales_analysis(self):
         subprocess.Popen(["python", "graph.py"])
